@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
 import App from './App.jsx';
 import ErrorPage from './error-page.jsx';
 import './index.css';
@@ -8,7 +8,7 @@ import PageBag from './routes/bag.jsx';
 import PageCourses from './routes/courses.jsx';
 import PageRounds from './routes/rounds.jsx';
 import PageProfile from './routes/profile.jsx';
-import AddDiscToBag from './routes/bag-add.jsx';
+import AddDiscForm from './routes/bag-add.jsx';
 
 const router = createBrowserRouter([
   {
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "add-disc",
-            element: <AddDiscToBag />
+            element: <AddDiscForm />
           },
         ],
       },

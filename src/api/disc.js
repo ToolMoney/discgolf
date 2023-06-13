@@ -1,5 +1,4 @@
 export function getDiscs() {
-    console.log('getDiscs()');
     return Promise.resolve(discs);
 }
 
@@ -7,9 +6,12 @@ export function addDisc(disc) {
     let rand = Math.floor(Math.random() * 10000000);
     disc.id = rand;
     discs.push(disc);
-    return disc;
+    return Promise.resolve(disc);
 }
 
+export function editDisc(disc) {
+
+}
 
 const discs = [
     {id: 1, name: "Flamethrower", speed: 11.5, glide: 6, turn: -2, fade: 2, inBag: true}, 

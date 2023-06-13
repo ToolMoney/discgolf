@@ -7,7 +7,7 @@ export default function PageBag() {
     const [inBagOnly, setInBagOnly] = useState(false);
     const [discs, setDiscs] = useState(null);
     useEffect(() => {
-        getDiscs().then((fetchedDiscs) => setDiscs(fetchedDiscs));
+        getDiscs().then((fetchedDiscs) => setDiscs([...fetchedDiscs]));
     }, []);
     return (
         <>
@@ -15,13 +15,10 @@ export default function PageBag() {
                 <DiscsOrThrows />
             </div>
             <div>
-                <AddDiscButton 
-                    discs={discs}
-                    onDiscsChange={setDiscs}
-                />
+                <AddDiscButton />
             </div>
             <div id="route-content">
-                <Outlet />
+                <Outlet context={[discs, setDiscs]} />
             </div>
             <div>
                 <ListDiscs 
@@ -43,18 +40,8 @@ function DiscsOrThrows() {
     );
 }
 
-function AddDiscButton({
-    discs,
-    onDiscsChange
-}) {
+function AddDiscButton() {
     return (
-        // <button onClick={() => 
-        //     onDiscsChange([
-        //         ...discs, 
-        //         (addDisc({name: "Skyler", speed: 11.5, glide: 6, turn: -2, fade: 2, inBag: true}))
-        //     ])
-        // }>
-
         <button>
             <Link to={`add-disc`}>Add Disc to Bag</Link>
         </button>
@@ -83,13 +70,14 @@ function ListDiscs({
                 } else {
                     discInBag = "Not In Bag"
                 }
+
                 discsRows.push(
                     <tr key={disc.id}>
                         <td>{disc.name}</td>
-                        <td>{disc.speed}</td>
-                        <td>{disc.glide}</td>
-                        <td>{disc.turn}</td>
-                        <td>{disc.fade}</td>
+                        <td>{disc.speed || disc.speed === 0 ? disc.speed : "-"}</td>
+                        <td>{disc.glide || disc.glide === 0 ? disc.glide : "-"}</td>
+                        <td>{disc.turn || disc.turn === 0 ? disc.turn : "-"}</td>
+                        <td>{disc.fade || disc.fade === 0 ? disc.fade : "-"}</td>
                         <td>{discInBag}</td>
                         <td>{disc.id}</td>
                     </tr>
