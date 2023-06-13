@@ -1,4 +1,3 @@
-import PageBag from './routes/bag.jsx';
 import {Outlet, Link} from 'react-router-dom';
 
 export default function App() {

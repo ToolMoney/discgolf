@@ -8,6 +8,7 @@ import PageBag from './routes/bag.jsx';
 import PageCourses from './routes/courses.jsx';
 import PageRounds from './routes/rounds.jsx';
 import PageProfile from './routes/profile.jsx';
+import AddDiscToBag from './routes/bag-add.jsx';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,12 @@ const router = createBrowserRouter([
       {
         path: "bag",
         element: <PageBag />,
+        children: [
+          {
+            path: "add-disc",
+            element: <AddDiscToBag />
+          },
+        ],
       },
       {
         path: "profile",

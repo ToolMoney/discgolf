@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import {getDiscs, addDisc} from '../api/disc.js';
+import {Outlet, Link} from 'react-router-dom';
 
 
 export default function PageBag() {
@@ -18,6 +19,9 @@ export default function PageBag() {
                     discs={discs}
                     onDiscsChange={setDiscs}
                 />
+            </div>
+            <div id="route-content">
+                <Outlet />
             </div>
             <div>
                 <ListDiscs 
@@ -44,17 +48,18 @@ function AddDiscButton({
     onDiscsChange
 }) {
     return (
-        <button onClick={() => 
-            onDiscsChange([
-                ...discs, 
-                (addDisc({name: "Skyler", speed: 11.5, glide: 6, turn: -2, fade: 2, inBag: true}))
-            ])
-        }>
-            Add Disc to Bag
+        // <button onClick={() => 
+        //     onDiscsChange([
+        //         ...discs, 
+        //         (addDisc({name: "Skyler", speed: 11.5, glide: 6, turn: -2, fade: 2, inBag: true}))
+        //     ])
+        // }>
+
+        <button>
+            <Link to={`add-disc`}>Add Disc to Bag</Link>
         </button>
     );
 }
-
 
 
 
