@@ -1,0 +1,32 @@
+.disc-table {
+    display: grid;
+    max-width: 800px;
+    border-width: 2px;
+    border-color: #000;
+    border-style: solid;
+    border-radius: 5px;
+}
+
+
+.table-row {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    background-color: #eee;
+    color: #000;
+    padding : 3px;
+}
+
+.table-row:nth-child(even) {
+    background-color: #ccc;
+    color: #000;
+}
+
+.span-1 {
+    grid-column: span 1;
+}
+
+.header {
+    font-weight: bolder;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}

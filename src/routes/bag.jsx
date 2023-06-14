@@ -55,15 +55,25 @@ function ListDiscs({
     discs,
     onInBagOnlyChange
 }) {
+
+    function getDiscDisplayValue(value) {
+        if (!value && value !== 0) {
+            return "-";
+        }
+        return value;
+    }
+
     const discsRows = [];
     if (discs === null) {
         discsRows.push(
-            <tr key='loading'><td>Your Data is Loading...</td></tr>
+            <div key='loading'>Your Data is Loading...</div>
         )
     } else {
     
         discs.forEach((disc) => {
             if (!inBagOnly || disc.inBag) {
+
+                // create switch for inBag
                 let discInBag;
                 if (disc.inBag) {
                     discInBag = "In Bag"
@@ -72,41 +82,56 @@ function ListDiscs({
                 }
 
                 discsRows.push(
-                    <tr key={disc.id}>
-                        <td>{disc.name}</td>
-                        <td>{disc.speed || disc.speed === 0 ? disc.speed : "-"}</td>
-                        <td>{disc.glide || disc.glide === 0 ? disc.glide : "-"}</td>
-                        <td>{disc.turn || disc.turn === 0 ? disc.turn : "-"}</td>
-                        <td>{disc.fade || disc.fade === 0 ? disc.fade : "-"}</td>
-                        <td>{discInBag}</td>
-                        <td>{disc.id}</td>
-                    </tr>
+                    <div key={disc.id} className="table-row">
+                    {/* <> */}
+                        <div className="span-1">
+                            {disc.name}
+                        </div>
+                        <div className="span-1">
+                            {getDiscDisplayValue(disc.speed)}
+                        </div>
+                        <div className="span-1">
+                            {getDiscDisplayValue(disc.glide)}
+                        </div>
+                        <div className="span-1">
+                            {getDiscDisplayValue(disc.turn)}
+                        </div>
+                        <div className="span-1">
+                            {getDiscDisplayValue(disc.fade)}
+                        </div>
+                        <div className="span-1">
+                            {discInBag}
+                        </div>
+                        <div>
+                            <button>Edit</button>
+                        </div>
+                        <div>
+                            {disc.id}
+                        </div>
+                    </div>
+                    // </>
                 );
             }
         });
     }
-    
+
     return (
         <>
             <div>
                 <InBagSwitch inBagOnly={inBagOnly} onInBagOnlyChange={onInBagOnlyChange} />
             </div>
             <div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Speed</th>
-                            <th>Glide</th>
-                            <th>Turn</th>
-                            <th>Fade</th>
-                            <th>In Bag?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {discsRows}
-                    </tbody>
-                </table>
+                <div className="disc-table">
+                    <div className="table-row header">
+                        <div className="disc-name span-1">Name</div>
+                        <div className="disc-speed span-1">Speed</div>
+                        <div className="disc-glide span-1">Glide</div>
+                        <div className="disc-turn span-1">Turn</div>
+                        <div className="disc-fade span-1">Fade</div>
+                        <div className="disc-bag span-1">In Bag?</div>
+                    </div>
+                    {discsRows}
+                </div>
             </div>
         </>
     );

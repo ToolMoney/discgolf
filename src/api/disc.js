@@ -1,3 +1,5 @@
+
+
 export function getDiscs() {
     return Promise.resolve(discs);
 }
@@ -9,8 +11,12 @@ export function addDisc(disc) {
     return Promise.resolve(disc);
 }
 
-export function editDisc(disc) {
-
+export function editDisc(freshDisc) {
+    for (let disc in discs) {
+        if (freshDisc.id = disc.id) {
+            Object.assign(disc, freshDisc);
+        }
+    }
 }
 
 const discs = [
