@@ -15,10 +15,24 @@ export function editDisc(freshDisc) {
     for (let disc of discs) {
         if (freshDisc.id === disc.id) {
             Object.assign(disc, freshDisc);
+            break;
         }
     }
     return Promise.resolve(freshDisc);
 }
+
+export function deleteDisc(discToDelete) {
+    for (let disc of discs) {
+        if (discToDelete.id === disc.id) {
+            let index = discs.indexOf(disc);
+            discs.splice(index, 1);
+            break;
+        }
+    }
+    return Promise.resolve();
+}
+
+
 
 const discs = [
     {id: 1, name: "Flamethrower", speed: 11.5, glide: 6, turn: -2, fade: 2, inBag: true}, 

@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {getDiscs, addDisc, editDisc} from '../api/disc.js';
+import {getDiscs, addDisc, editDisc, deleteDisc} from '../api/disc.js';
 import {Outlet, Link} from 'react-router-dom';
 
 
@@ -111,9 +111,17 @@ function ListDiscs({
             ])
         }
 
+        function onDiscDelete() {
+            let index = discs.indexOf(disc);
+            onDiscsChange([
+                ...discs.slice(0, index),
+                ...discs.slice(index + 1)
+            ])
+        }
+
         if (!inBagOnly || disc.inBag) {
             discsRows.push(
-                <DiscRow key={disc.id} disc={disc} onDiscChange={onDiscChange} />
+                <DiscRow key={disc.id} disc={disc} onDiscChange={onDiscChange} onDiscDelete={onDiscDelete} />
             );
         }
     });
@@ -130,7 +138,7 @@ function ListDiscs({
 
 
 
-function DiscRow({disc, onDiscChange}) {
+function DiscRow({disc, onDiscChange, onDiscDelete}) {
     const [editing, setEditing] = useState(false);
 
 
@@ -145,6 +153,13 @@ function DiscRow({disc, onDiscChange}) {
         console.log('Editing disc with id', disc.id);
         setEditing(!editing);
     }
+
+    function handleOnClickDelete() {
+        if (window.confirm(`Would you like to delete ${disc.name}?`)) {
+            deleteDisc(disc).then(() => onDiscDelete())
+        }
+    }
+
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -215,17 +230,14 @@ function DiscRow({disc, onDiscChange}) {
             </div>
             <div className="disc-bag span-1">
                 <input type="checkbox" checked={disc.inBag} onChange={(event) => { handleCheckbox(event)}}></input>
-                
             </div>
-            <div>
+            <div className="buttons">
                 {
                     editing ?
                         <input type="submit" value="Save"></input>
                         : <button type="button" onClick={() => { handleOnClickEdit() }}>Edit</button>
                 }
-            </div>
-            <div>
-                {disc.id}
+                <button type="button" onClick={() => { handleOnClickDelete() }}>Delete</button>
             </div>
         </form>
     );

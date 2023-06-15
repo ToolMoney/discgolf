@@ -10,7 +10,7 @@
 
 .table-row {
     display: grid;
-    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     background-color: #eee;
     color: #000;
     padding : 3px;
@@ -31,34 +31,11 @@
     border-bottom-style: solid;
 }
 
-
 .edit-field {
     max-width: 80%;
 }
 
-
-/* .disc-name {
-    grid-column: 1;
-    grid-row: 1;
+.buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
 }
-
-.disc-speed {
-    grid-column: 2;
-    grid-row: 1;
-}
-
-.disc-glide {
-    grid-column: 3;
-    grid-row: 1;
-}
-
-.disc-turn {
-    grid-column: 4;
-    grid-row: 1;
-}
-
-.disc-fade {
-    grid-column: 5;
-    grid-row: 1;
-}
- */
