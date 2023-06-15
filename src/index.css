@@ -30,3 +30,35 @@
     border-bottom-width: 1px;
     border-bottom-style: solid;
 }
+
+
+.edit-field {
+    max-width: 80%;
+}
+
+
+/* .disc-name {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.disc-speed {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.disc-glide {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.disc-turn {
+    grid-column: 4;
+    grid-row: 1;
+}
+
+.disc-fade {
+    grid-column: 5;
+    grid-row: 1;
+}
+ */

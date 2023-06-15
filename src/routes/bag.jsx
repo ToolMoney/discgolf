@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {getDiscs, addDisc} from '../api/disc.js';
+import {getDiscs, addDisc, editDisc} from '../api/disc.js';
 import {Outlet, Link} from 'react-router-dom';
 
 
@@ -27,7 +27,7 @@ export default function PageBag() {
                 <ListDiscs 
                     inBagOnly={inBagOnly}
                     discs={discs}
-                    onInBagOnlyChange={setInBagOnly}
+                    onDiscsChange={setDiscs}
                 />
             </div>
         </>
@@ -71,29 +71,22 @@ function InBagSwitch({ inBagOnly, onInBagOnlyChange }) {
 
 function ListDiscs({
     inBagOnly, 
-    discs
+    discs,
+    onDiscsChange
 }) {
-
-    function getDiscDisplayValue(value) {
-        if (!value && value !== 0) {
-            return "-";
-        }
-        return value;
-    }
 
     function TableHeaders() {
         return (
             <div className="table-row header">
-                <div className="disc-name span-1">Name</div>
-                <div className="disc-speed span-1">Speed</div>
-                <div className="disc-glide span-1">Glide</div>
-                <div className="disc-turn span-1">Turn</div>
-                <div className="disc-fade span-1">Fade</div>
-                <div className="disc-bag span-1">In Bag?</div>
+                <div className="header-name span-1">Name</div>
+                <div className="header-speed span-1">Speed</div>
+                <div className="header-glide span-1">Glide</div>
+                <div className="header-turn span-1">Turn</div>
+                <div className="header-fade span-1">Fade</div>
+                <div className="header-bag span-1">In Bag?</div>
             </div>
         );
     }
-
 
     if (!discs) {
         return (
@@ -106,51 +99,24 @@ function ListDiscs({
         );
     }
 
-
     const discsRows = [];
-    
     discs.forEach((disc) => {
+
+        function onDiscChange(newDisc) {
+            let index = discs.indexOf(disc);
+            onDiscsChange([
+                ...discs.slice(0, index),
+                newDisc,
+                ...discs.slice(index + 1)
+            ])
+        }
+
         if (!inBagOnly || disc.inBag) {
-
-            // create switch for inBag
-            let discInBag;
-            if (disc.inBag) {
-                discInBag = "In Bag"
-            } else {
-                discInBag = "Not In Bag"
-            }
-
             discsRows.push(
-                <div key={disc.id} className="table-row">
-                    <div className="span-1">
-                        {disc.name}
-                    </div>
-                    <div className="span-1">
-                        {getDiscDisplayValue(disc.speed)}
-                    </div>
-                    <div className="span-1">
-                        {getDiscDisplayValue(disc.glide)}
-                    </div>
-                    <div className="span-1">
-                        {getDiscDisplayValue(disc.turn)}
-                    </div>
-                    <div className="span-1">
-                        {getDiscDisplayValue(disc.fade)}
-                    </div>
-                    <div className="span-1">
-                        {discInBag}
-                    </div>
-                    <div>
-                        <button>Edit</button>
-                    </div>
-                    <div>
-                        {disc.id}
-                    </div>
-                </div>
+                <DiscRow key={disc.id} disc={disc} onDiscChange={onDiscChange} />
             );
         }
     });
-
 
     return (
         <>
@@ -162,3 +128,105 @@ function ListDiscs({
     );
 }
 
+
+
+function DiscRow({disc, onDiscChange}) {
+    const [editing, setEditing] = useState(false);
+
+
+    function getDiscDisplayValue(value) {
+        if (!value && value !== 0) {
+            return "-";
+        }
+        return value;
+    }
+
+    function handleOnClickEdit() {
+        console.log('Editing disc with id', disc.id);
+        setEditing(!editing);
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const editedFields = Object.fromEntries(formData.entries());
+
+        for (let prop in editedFields) {
+            if (editedFields[prop] === "") {
+                editedFields[prop] = null;
+            }
+        }
+
+        const newDisc = Object.assign({}, disc, editedFields);
+        console.log(newDisc);
+        editDisc(newDisc).then((freshDisc) => {
+            onDiscChange(freshDisc);
+            setEditing(false);
+        })
+    }
+
+
+    function handleCheckbox(event) {
+        const isInBag = event.target.checked
+
+        const newDisc = Object.assign({}, disc, {inBag: isInBag})
+        editDisc(newDisc).then((freshDisc) => {
+            onDiscChange(freshDisc);
+        })
+    }
+
+    return (
+        <form key={disc.id} className="table-row" onSubmit={(event) => handleSubmit(event)}>
+            <div className="disc-name span-1">
+                {
+                    editing ? 
+                        <input className="edit-field" name="name" type="text" defaultValue={disc.name} required></input>
+                        : disc.name
+                }
+            </div>
+            <div className="disc-speed span-1">
+                {
+                    editing ? 
+                        <input className="edit-field" name="speed" type="number" defaultValue={disc.speed}></input>
+                        : getDiscDisplayValue(disc.speed)
+                }
+            </div>
+            <div className="disc-glide span-1">
+                {
+                    editing ? 
+                        <input className="edit-field" name="glide" type="number" defaultValue={disc.glide}></input>
+                        : getDiscDisplayValue(disc.glide)
+                }
+            </div>
+            <div className="disc-turn span-1">
+                {
+                    editing ? 
+                        <input className="edit-field" name="turn" type="number" defaultValue={disc.turn}></input>
+                        : getDiscDisplayValue(disc.turn)
+                }
+            </div>
+            <div className="disc-fade span-1">
+                {
+                    editing ? 
+                        <input className="edit-field" name="fade" type="number" defaultValue={disc.fade}></input>
+                        : getDiscDisplayValue(disc.fade)
+                }
+            </div>
+            <div className="disc-bag span-1">
+                <input type="checkbox" checked={disc.inBag} onChange={(event) => { handleCheckbox(event)}}></input>
+                
+            </div>
+            <div>
+                {
+                    editing ?
+                        <input type="submit" value="Save"></input>
+                        : <button type="button" onClick={() => { handleOnClickEdit() }}>Edit</button>
+                }
+            </div>
+            <div>
+                {disc.id}
+            </div>
+        </form>
+    );
+}
