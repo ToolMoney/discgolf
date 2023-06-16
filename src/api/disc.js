@@ -1,14 +1,19 @@
+import { json } from "react-router-dom";
 
 
 export function getDiscs() {
-    return Promise.resolve(discs);
+    return fetch('http://127.0.0.1:5000/discs').then((response) => response.json())
 }
 
 export function addDisc(disc) {
     let rand = Math.floor(Math.random() * 10000000);
     disc.id = rand;
-    discs.push(disc);
-    return Promise.resolve(disc);
+    // discs.push(disc);
+    return fetch('http://127.0.0.1:5000/discs', {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(disc),
+    }).then((response) => response.json())
 }
 
 export function editDisc(freshDisc) {

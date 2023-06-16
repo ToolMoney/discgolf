@@ -17,7 +17,7 @@
 }
 
 .table-row:nth-child(even) {
-    background-color: #ccc;
+    background-color: #cccddd;
     color: #000;
 }
 
