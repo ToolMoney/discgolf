@@ -77,7 +77,7 @@ function ListDiscs({
 
     function TableHeaders() {
         return (
-            <div className="table-row header">
+            <div className="table-row bag-row header">
                 <div className="header-name span-1">Name</div>
                 <div className="header-speed span-1">Speed</div>
                 <div className="header-glide span-1">Glide</div>
@@ -192,7 +192,7 @@ function DiscRow({disc, onDiscChange, onDiscDelete}) {
     }
 
     return (
-        <form key={disc.id} className="table-row" onSubmit={(event) => handleSubmit(event)}>
+        <form key={disc.id} className="table-row bag-row" onSubmit={(event) => handleSubmit(event)}>
             <div className="disc-name span-1">
                 {
                     editing ? 

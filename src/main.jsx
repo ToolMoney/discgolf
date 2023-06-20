@@ -9,6 +9,7 @@ import PageCourses from './routes/courses.jsx';
 import PageRounds from './routes/rounds.jsx';
 import PageProfile from './routes/profile.jsx';
 import AddDiscForm from './routes/bag-add.jsx';
+import AddCourseForm from './routes/course-add.jsx';
 
 
 const router = createBrowserRouter([
@@ -24,6 +25,12 @@ const router = createBrowserRouter([
       {
         path: "courses",
         element: <PageCourses />,
+        children: [
+          {
+            path: "add-course",
+            element: <AddCourseForm />
+          }
+        ]
       },
       {
         path: "bag",
