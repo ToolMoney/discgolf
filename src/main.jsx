@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, useParams, } from 'react-router-dom';
 import App from './App.jsx';
 import ErrorPage from './error-page.jsx';
 import './index.css';
@@ -10,6 +10,7 @@ import PageRounds from './routes/rounds.jsx';
 import PageProfile from './routes/profile.jsx';
 import AddDiscForm from './routes/bag-add.jsx';
 import AddCourseForm from './routes/course-add.jsx';
+import CoursePage from './routes/course.jsx';
 
 
 const router = createBrowserRouter([
@@ -29,8 +30,12 @@ const router = createBrowserRouter([
           {
             path: "add-course",
             element: <AddCourseForm />
-          }
+          },
         ]
+      },
+      {
+        path: "courses/:id",
+        element: <CoursePage />
       },
       {
         path: "bag",

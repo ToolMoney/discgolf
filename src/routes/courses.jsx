@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {getCourses, addCourse, editCourse, deleteCourse} from '../api/course.js';
 import {Outlet, Link} from 'react-router-dom';
+import {useSetPath} from '../hooks';
 
 
 export default function PageCourses() {
@@ -70,6 +71,7 @@ function ListCourses({
                 <div className="header-location span-1">Location</div>
                 <div className="header-fee span-1">Fee</div>
                 <div className="header-favorite span-1">Favorite?</div>
+                <div className="header-new-round span-1">Start Round</div>
             </div>
         );
     }
@@ -126,6 +128,7 @@ function ListCourses({
 
 function CourseRow({course, onCourseChange, onCourseDelete}) {
     const [editing, setEditing] = useState(false);
+    const setPath = useSetPath();
 
 
     function getCourseDisplayValue(value) {
@@ -133,6 +136,11 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
             return "-";
         }
         return value;
+    }
+
+    function handleOnClickNewRound() {
+        setPath(`../rounds/${course.id}/new`);
+        // TODO add page for new round on rounds page
     }
 
     function handleOnClickEdit() {
@@ -183,7 +191,7 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
                 {
                     editing ? 
                         <input className="edit-field" name="name" type="text" defaultValue={course.name} required></input>
-                        : course.name
+                        : <Link to={`./${course.id}`}>{course.name}</Link>
                 }
             </div>
             <div className="course-holes span-1">
@@ -210,9 +218,13 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
                         : `$ ${getCourseDisplayValue(course.fee)}`
                 }
             </div>
-
             <div className="course-favorite span-1">
                 <input type="checkbox" checked={course.favorite} onChange={(event) => { handleCheckbox(event)}}></input>
+            </div>
+            <div className="course-start span-1">
+                {
+                    <button type="button" onClick={() => { handleOnClickNewRound() }} disabled={editing}>New Round</button>
+                }
             </div>
             <div className="buttons">
                 {
