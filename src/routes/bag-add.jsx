@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import {useSetPath} from '../hooks';
 import {useOutletContext} from 'react-router-dom';
 import {addDisc as addDiscApi} from '../api/disc';

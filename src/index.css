@@ -1,4 +1,4 @@
-.disc-table, .course-table{
+.disc-table, .course-table, .hole-table{
     display: grid;
     max-width: 800px;
     border-width: 2px;
@@ -23,6 +23,11 @@
 .course-row {
     grid-template-columns: repeat(7, minmax(0, 1fr));
 }
+
+.hole-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 
 .table-row:nth-child(even) {
     background-color: #cccddd;

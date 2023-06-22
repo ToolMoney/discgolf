@@ -1,7 +1,8 @@
 import {useState, useEffect} from 'react';
-import {getCourses, addCourse, editCourse, deleteCourse} from '../api/course.js';
+import {getCourses, editCourse, deleteCourse} from '../api/course.js';
 import {Outlet, Link} from 'react-router-dom';
 import {useSetPath} from '../hooks';
+import {addHole as addHoleApi} from '../api/course';
 
 
 export default function PageCourses() {
@@ -138,6 +139,19 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
         return value;
     }
 
+    function getHoleCount() {
+        return getUniqueHoles().size;
+    }
+
+    function getUniqueHoles() {
+        const uniqueHoles = new Set();
+        for (let hole of course.holes) {
+            uniqueHoles.add(hole.hole_number);
+        }
+        return uniqueHoles;
+    }
+
+
     function handleOnClickNewRound() {
         setPath(`../rounds/${course.id}/new`);
         // TODO add page for new round on rounds page
@@ -155,11 +169,27 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
     }
 
 
+    function addHoles(addUpTo) {
+        const uniqueHoles = getUniqueHoles();
+        for (let i = 1; i <= addUpTo; i++) {
+            if (!uniqueHoles.has(i)) {
+                let holeToAdd = {"hole_number": i};
+                addHoleApi(course.id, holeToAdd).then((newHole) => {
+                    let updatedCourse = Object.assign({}, course);
+                    updatedCourse.holes = [...course.holes, newHole];
+                    onCourseChange(updatedCourse);
+                })
+            }
+        }
+    }
+
     function handleSubmit(event) {
         event.preventDefault();
 
         const formData = new FormData(event.target);
         const editedFields = Object.fromEntries(formData.entries());
+    
+        addHoles(editedFields.holes);
 
         for (let prop in editedFields) {
             if (editedFields[prop] === "") {
@@ -168,11 +198,12 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
         }
 
         const newCourse = Object.assign({}, course, editedFields);
+        delete newCourse.holes;
         console.log(newCourse);
         editCourse(newCourse).then((freshCourse) => {
             onCourseChange(freshCourse);
             setEditing(false);
-        })
+        });
     }
 
 
@@ -182,7 +213,7 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
         const newCourse = Object.assign({}, course, {favorite: isFavorites})
         editCourse(newCourse).then((freshCourse) => {
             onCourseChange(freshCourse);
-        })
+        });
     }
 
     return (
@@ -197,8 +228,8 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
             <div className="course-holes span-1">
                 {
                     editing ? 
-                        <input className="edit-field" name="holes" type="number" defaultValue={course.holes}></input>
-                        : getCourseDisplayValue(course.holes)
+                        <input className="edit-field" name="holes" type="number" defaultValue={getHoleCount()}></input>
+                        : getCourseDisplayValue(getHoleCount())
                 }
             </div>
             <div className="course-location span-1">

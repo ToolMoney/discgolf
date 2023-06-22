@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {getDiscs, addDisc, editDisc, deleteDisc} from '../api/disc.js';
+import {getDiscs, editDisc, deleteDisc} from '../api/disc.js';
 import {Outlet, Link} from 'react-router-dom';
 
 

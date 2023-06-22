@@ -11,6 +11,7 @@ import PageProfile from './routes/profile.jsx';
 import AddDiscForm from './routes/bag-add.jsx';
 import AddCourseForm from './routes/course-add.jsx';
 import CoursePage from './routes/course.jsx';
+import AddHoleForm from './routes/hole-add.jsx';
 
 
 const router = createBrowserRouter([
@@ -35,7 +36,13 @@ const router = createBrowserRouter([
       },
       {
         path: "courses/:id",
-        element: <CoursePage />
+        element: <CoursePage />,
+        children: [
+          {
+            path: "add-hole",
+            element: <AddHoleForm />
+          },
+        ]
       },
       {
         path: "bag",
