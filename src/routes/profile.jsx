@@ -3,7 +3,8 @@ export default function PageProfile() {
     return (
         <>
             <div>
-                <h1>Are you lost?</h1>
+                <h1>It's dangerous to go alone. 
+                    <br></br>Take this 🌮</h1>
             </div>
         </>
     );

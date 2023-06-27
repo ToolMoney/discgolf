@@ -12,6 +12,8 @@ import AddDiscForm from './routes/bag-add.jsx';
 import AddCourseForm from './routes/course-add.jsx';
 import CoursePage from './routes/course.jsx';
 import AddHoleForm from './routes/hole-add.jsx';
+import AddRoundForm from './routes/round-add.jsx';
+import RoundPage from './routes/round.jsx';
 
 
 const router = createBrowserRouter([
@@ -23,6 +25,16 @@ const router = createBrowserRouter([
       {
         path: "rounds",
         element: <PageRounds />,
+        children: [
+          {
+            path: "add-round",
+            element: <AddRoundForm />
+          }
+        ]
+      },
+      {
+        path: "rounds/:id",
+        element: <RoundPage />,
       },
       {
         path: "courses",

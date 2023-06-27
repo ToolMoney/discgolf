@@ -64,7 +64,6 @@ export function addHole(setPath, holes, setHoles, holeToAdd, course) {
     addHoleApi(course.id, holeToAdd).then((newHole) => {
         let sortedHoles = sortHoles(holes, newHole);
         setHoles(sortedHoles);
-        // setHoles([...holes, newHole]);
     });
     setPath("..");
 }

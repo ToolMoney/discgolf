@@ -46,9 +46,12 @@ function DiscsOrThrows() {
 
 
 function AddDiscButton() {
+    const [addFormOpen, setAddFormOpen] = useState(false);
+    let linkTo = addFormOpen ? "." : "add-disc"
+
     return (
-        <button>
-            <Link to={`add-disc`}>Add Disc to Bag</Link>
+        <button type="button" onClick={() => { setAddFormOpen(!addFormOpen) }}>
+            <Link to={linkTo}>Add Disc to Bag</Link>
         </button>
     );
 }

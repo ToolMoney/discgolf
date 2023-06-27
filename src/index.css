@@ -1,4 +1,4 @@
-.disc-table, .course-table, .hole-table{
+.disc-table, .course-table, .hole-table, .round-table, .score-table{
     display: grid;
     max-width: 800px;
     border-width: 2px;
@@ -26,6 +26,14 @@
 
 .hole-row {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.round-row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.score-row {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 

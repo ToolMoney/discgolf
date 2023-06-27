@@ -36,9 +36,12 @@ export default function PageCourses() {
 
 
 function AddCourseButton() {
+    const [addFormOpen, setAddFormOpen] = useState(false);
+    let linkTo = addFormOpen ? "." : "add-course"
+
     return (
-        <button>
-            <Link to={`add-course`}>Add Course to Catalog</Link>
+        <button type="button" onClick={() => { setAddFormOpen(!addFormOpen) }}>
+            <Link to={linkTo}>Add Course to Catalog</Link>
         </button>
     );
 }

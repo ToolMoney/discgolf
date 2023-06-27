@@ -16,8 +16,8 @@ export default function CoursePage() {
             }
         );
     }, []);
-    
-    
+
+
     return (
         <>
             <div>
@@ -45,18 +45,26 @@ export default function CoursePage() {
 }
 
 function AddHoleButton() {
+    const [addFormOpen, setAddFormOpen] = useState(false);
+    let linkTo = addFormOpen ? "." : "add-hole"
+
     return (
-        <button>
-            <Link to={`add-hole`}>Add Hole to Course</Link>
+        <button type="button" onClick={() => { setAddFormOpen(!addFormOpen) }}>
+            <Link to={linkTo}>Add Hole to Course</Link>
         </button>
     );
 }
 
 function CourseInfo({ course }) {
-    // let courseName = course.name;
+    if (!course) {
+        return <div key='loading'>Your Data is Loading...</div>
+    }
     return (
         <>
-            
+            <div>{course.name}</div>
+            <div>{course.location}</div>
+            <div>{course.fee}</div>
+            <div>ID: {course.id}</div>
         </>
     );
 }
@@ -67,9 +75,9 @@ function LayoutSwitch({ layout, onLayoutChange }) {
             <span>Layout</span>
             <select value={layout} onChange={(event) => onLayoutChange(event.target.value)}>
                 <option value="">All</option>
-                <option value="a">A</option>
-                <option value="b">B</option>
-                <option value="c">C</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
             </select>
         </>
     );

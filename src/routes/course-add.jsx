@@ -7,10 +7,6 @@ export default function AddCourseForm() {
     const [courses, setCourses] = useOutletContext();
     const setPath = useSetPath();
 
-
-    
-
-
     function handleSubmit(event) {
 
         function addHoles(course, addUpTo) {
@@ -34,7 +30,6 @@ export default function AddCourseForm() {
         const courseToAdd = Object.fromEntries(formData.entries());
         const holeCount = courseToAdd.holes;
 
-        // addHoles(courseToAdd, courseToAdd.holes);
 
         delete courseToAdd.holes;
         courseToAdd.favorite = false;
@@ -43,7 +38,6 @@ export default function AddCourseForm() {
                 courseToAdd[prop] = null;
             }
         }
-        // addCourse(setPath, courses, setCourses, courseToAdd);
 
         addCourseApi(courseToAdd)
             .then((newCourse) => {
@@ -69,12 +63,4 @@ export default function AddCourseForm() {
         </form>
     );
 }
-
-
-// function addCourse(setPath, courses, setCourses, courseToAdd) {
-//     addCourseApi(courseToAdd).then((newCourse) => {
-//         setCourses([...courses, newCourse]);
-//     });
-//     setPath("..");
-// }
 
