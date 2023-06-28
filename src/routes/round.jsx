@@ -36,13 +36,13 @@ export default function RoundPage() {
     return (
         <>
             <div>
-                <RoundInfo 
-                    round={round} 
+                <RoundInfo
+                    round={round}
                     scores={scores}
                 />
             </div>
             <div>
-                <ListScores 
+                <ListScores
                     course={course}
                     scores={scores}
                     onScoresChange={setScores}
@@ -132,26 +132,37 @@ function ListScores({
 
         function onScoreChange(newScore) {
             const newScores = {...scores};
+            delete newScores[hole.id];
             newScores[newScore.hole_id] = newScore;
             onScoresChange(newScores)
         }
 
-        function onScoreDelete() {
+        function onScoreDelete(deletedScore) {
             const newScores = {...scores};
-            delete newScores[hole.id];
+            console.log(deletedScore);
+            delete newScores[deletedScore.hole_id];
             onScoresChange(newScores)
         }
 
         if (hole) {
             scoresRows.push(
-                <ScoreRow key={hole.id} 
-                    hole={hole}
-                    holes={holes}
-                    score={scores[hole.id]} 
-                    onScoreChange={onScoreChange} 
-                    onScoreDelete={onScoreDelete}
-                    round={round}
-                />
+                scores[hole.id] ?
+                (<ScoredHoleRow key={hole.id}
+                startingHole={hole}
+                holes={holes}
+                score={scores[hole.id]}
+                onScoreChange={onScoreChange}
+                onScoreDelete={onScoreDelete}
+                round={round}
+            />)
+                : (
+                    <UnscoredHoleRow key={hole.id}
+                        startingHole={hole}
+                        holes={holes}
+                        score={scores[hole.id]}
+                        onScoreChange={onScoreChange}
+                        round={round}
+                    />)
             );
         }
     });
@@ -166,45 +177,43 @@ function ListScores({
     );
 }
 
+function HoleLayoutSwitch({ holes, defaultLayout, onLayoutChange }) {
 
-function ScoreRow({hole, holes, score, onScoreChange, onScoreDelete, round}) {
-    const [layout, setLayout] = useState(round.default_layout);
-    const [editing, setEditing] = useState(!(score && score.score));
-
-
-    function LayoutSwitch({ layout, setLayout }) {
-        const holeOptions = [];
-        for (let hole of holes) {
-            holeOptions.push(<option key={hole.id} value={hole.id}>{hole.layout}</option>);
-        }
-        return (
-            <>
-                <select value={layout} onChange={(event) => onLayoutChange(event.target.value, setLayout)}>
-                    {holeOptions}
-                </select>
-            </>
-        );
+    const holeOptions = [];
+    for (let hole of holes) {
+        holeOptions.push(<option key={hole.id} value={hole.id}>{hole.layout}</option>);
     }
 
-    function onLayoutChange(holeId, setLayout) {
-        holeId = parseInt(holeId);
-        console.log(holeId);
-        let newScorePromise;
-        if (score) {
-            newScorePromise = Promise.resolve(Object.assign(score, {hole_id: holeId}));
-        } else {
-            newScorePromise = addScore(round.id, {hole_id: holeId});
+    let holeWithDefaultLayout;
+    for (let hole of holes) {
+        if (hole.layout === defaultLayout) {
+            holeWithDefaultLayout = hole;
+            break;
         }
-        newScorePromise.then((newScore) => {
-            onScoreChange(newScore);
-            for (let hole of holes) {
-                if (hole.id == holeId) {
-                    setLayout(hole.layout);
-                }
+    }
+
+    return (
+        <>
+            <select name="hole_id" defaultValue={holeWithDefaultLayout.id} onChange={(event) => onLayoutChange(parseInt(event.target.value))}>
+                {holeOptions}
+            </select>
+        </>
+    );
+}
+
+function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete, round}) {
+    const [layout, setLayout] = useState(startingHole.layout);
+    const [editing, setEditing] = useState(!score.score);
+    const [hole, setHole] = useState(startingHole);
+
+    function onLayoutChange(holeIdOfHoleWithNewLayout) {
+        for (let availableHole of holes) {
+            if (availableHole.id === holeIdOfHoleWithNewLayout) {
+                setHole(availableHole);
+                break;
             }
-        })
+        }
     }
-
 
     function getScoreDisplayValue(value) {
         if (!value && value !== 0) {
@@ -219,9 +228,8 @@ function ScoreRow({hole, holes, score, onScoreChange, onScoreDelete, round}) {
     }
 
     function handleOnClickDelete() {
-        deleteScore(round.id, score).then(() => onScoreDelete())
+        deleteScore(round.id, score).then(() => onScoreDelete(score))
     }
-
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -235,22 +243,12 @@ function ScoreRow({hole, holes, score, onScoreChange, onScoreDelete, round}) {
             }
         }
 
-        const newScore = Object.assign({hole_id: hole.id, round_id: round.id}, score,  editedFields);
-        console.log(newScore);
-        score ? 
-            editScore(round.id, newScore).then((freshScore) => {
-                onScoreChange(freshScore);
-                setEditing(false);
-            }) :
-            addScore(round.id, newScore).then((freshScore) => {
-                onScoreChange(freshScore);
-                setEditing(false);
-            });
+        const editedScore = Object.assign({hole_id: hole.id, round_id: round.id}, score,  editedFields);
+        editScore(round.id, editedScore).then((freshScore) => {
+            onScoreChange(freshScore);
+            setEditing(false);
+        });
     }
-
-
-
-
 
     return (
         <form key={round.id} className="table-row score-row" onSubmit={(event) => handleSubmit(event)}>
@@ -261,13 +259,14 @@ function ScoreRow({hole, holes, score, onScoreChange, onScoreDelete, round}) {
             </div>
             <div className="score-layout span-1">
                 {
-                    editing ? 
-                        // <input className="edit-field" name="layout" type="text" defaultValue={hole.layout}></input>
-                        <LayoutSwitch 
-                            layout={layout}
-                            setLayout={setLayout}
-                        />
-                        : 
+                    editing ?
+                    // <input className="edit-field" name="layout" type="text" defaultValue={hole.layout}></input>
+                    <HoleLayoutSwitch
+                        holes={holes}
+                        defaultLayout={layout}
+                        onLayoutChange={onLayoutChange}
+                    />
+                        :
                         getScoreDisplayValue(hole.layout)
                 }
             </div>
@@ -283,18 +282,97 @@ function ScoreRow({hole, holes, score, onScoreChange, onScoreDelete, round}) {
             </div>
             <div className="score-score span-1">
                 {
-                    editing ? 
-                        <input className="edit-field" name="score" type="number" defaultValue={(score && score.score)} required></input>
-                        : (score && score.score)
+                    editing ?
+                    <input className="edit-field" name="score" type="number" defaultValue={(score.score)} required></input>
+                        : (score.score)
                 }
             </div>
             <div className="buttons">
                 {
                     editing ?
-                        <input type="submit" value="Save"></input>
+                    <input type="submit" value="Save"></input>
                         : <button type="button" onClick={() => { handleOnClickEdit() }}>Edit</button>
                 }
                 <button type="button" onClick={() => { handleOnClickDelete() }}>Clear</button>
+            </div>
+        </form>
+    );
+}
+
+function UnscoredHoleRow({startingHole, holes, onScoreChange, round}) {
+    const [layout, setLayout] = useState(startingHole.layout);
+    const [hole, setHole] = useState(startingHole);
+
+    function onLayoutChange(holeId) {
+        for (let availableHole of holes) {
+            if (availableHole.id === holeId) {
+                setHole(availableHole);
+                break;
+            }
+        }
+    }
+
+    function getScoreDisplayValue(value) {
+        if (!value && value !== 0) {
+            return "-";
+        }
+        return value;
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const editedFields = Object.fromEntries(formData.entries());
+
+        for (let prop in editedFields) {
+            if (editedFields[prop] === "") {
+                editedFields[prop] = null;
+            }
+        }
+
+        const newScore = Object.assign({hole_id: hole.id, round_id: round.id}, editedFields);
+        addScore(round.id, newScore).then((freshScore) => {
+            onScoreChange(freshScore);
+            setEditing(false);
+        });
+    }
+
+    return (
+        <form key={round.id} className="table-row score-row" onSubmit={(event) => handleSubmit(event)}>
+            <div className="score-hole span-1">
+                {
+                    hole.hole_number
+                }
+            </div>
+            <div className="score-layout span-1">
+                {
+                    <HoleLayoutSwitch
+                        holes={holes}
+                        defaultLayout={layout}
+                        onLayoutChange={onLayoutChange}
+                    />
+                }
+            </div>
+            <div className="score-distance span-1">
+                {
+                    `${getScoreDisplayValue(hole.distance)} ft`
+                }
+            </div>
+            <div className="score-par span-1">
+                {
+                    getScoreDisplayValue(hole.par)
+                }
+            </div>
+            <div className="score-score span-1">
+                {
+                    <input className="edit-field" name="score" type="number" required></input>
+                }
+            </div>
+            <div className="buttons">
+                {
+                    <input type="submit" value="Save"></input>
+                }
             </div>
         </form>
     );
