@@ -141,31 +141,20 @@ function ListScores({
 
         function onScoreDelete(deletedScore) {
             const newScores = {...scores};
-            console.log(deletedScore);
             delete newScores[deletedScore.hole_id];
             onScoresChange(newScores)
         }
 
         if (hole) {
             scoresRows.push(
-                scores[hole.id] ?
-                (<ScoredHoleRow key={hole.id}
-                startingHole={hole}
-                holes={holes}
-                score={scores[hole.id]}
-                onScoreChange={onScoreChange}
-                onScoreDelete={onScoreDelete}
-                round={round}
-            />)
-                : (
-                    <UnscoredHoleRow key={hole.id}
-                        startingHole={hole}
-                        holes={holes}
-                        score={scores[hole.id]}
-                        onScoreChange={onScoreChange}
-                        round={round}
-                    />)
-            );
+                <ScoreRow key={hole.id}
+                    startingHole={hole}
+                    holes={holes}
+                    score={scores[hole.id]}
+                    onScoreChange={onScoreChange}
+                    onScoreDelete={onScoreDelete}
+                    round={round}
+                />);
         }
     });
 
@@ -202,8 +191,8 @@ function HoleLayoutSwitch({ holes, defaultLayout, onLayoutChange }) {
     );
 }
 
-function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete, round}) {
-    const [editing, setEditing] = useState(!score.score);
+function ScoreRow({startingHole, holes, score, onScoreChange, onScoreDelete, round}) {
+    const [editing, setEditing] = useState(score && !score.score);
     const [hole, setHole] = useState(startingHole);
 
     function onLayoutChange(holeIdOfHoleWithNewLayout) {
@@ -226,13 +215,21 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
     function handleSubmit(event) {
         event.preventDefault();
 
-        const editedFields = getObjectFromForm(event.target);
+        const formFields = getObjectFromForm(event.target);
 
-        const editedScore = Object.assign(score, editedFields);
-        editScore(round.id, editedScore).then((freshScore) => {
-            onScoreChange(freshScore);
-            setEditing(false);
-        });
+        if (score) {
+            const editedScore = Object.assign(score, formFields);
+            editScore(round.id, editedScore).then((freshScore) => {
+                onScoreChange(freshScore);
+                setEditing(false);
+            });
+        }
+        else {
+            addScore(round.id, formFields).then((freshScore) => {
+                onScoreChange(freshScore);
+                setEditing(false);
+            });
+        }
     }
 
     return (
@@ -245,7 +242,6 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
             <div className="score-layout span-1">
                 {
                     editing ?
-                    // <input className="edit-field" name="layout" type="text" defaultValue={hole.layout}></input>
                     <HoleLayoutSwitch
                         holes={holes}
                         defaultLayout={startingHole.layout}
@@ -268,8 +264,8 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
             <div className="score-score span-1">
                 {
                     editing ?
-                    <input className="edit-field" name="score" type="number" defaultValue={(score.score)} required></input>
-                        : (score.score)
+                    <input className="edit-field" name="score" type="number" defaultValue={(score && score.score)} required></input>
+                        : (score && score.score)
                 }
             </div>
             <div className="buttons">
@@ -278,69 +274,7 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
                     <input type="submit" value="Save"></input>
                         : <button type="button" onClick={() => { handleOnClickEdit() }}>Edit</button>
                 }
-                <button type="button" onClick={() => { handleOnClickDelete() }}>Clear</button>
-            </div>
-        </form>
-    );
-}
-
-function UnscoredHoleRow({startingHole, holes, onScoreChange, round}) {
-    const [hole, setHole] = useState(startingHole);
-
-    function onLayoutChange(holeId) {
-        for (let availableHole of holes) {
-            if (availableHole.id === holeId) {
-                setHole(availableHole);
-                break;
-            }
-        }
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        const newScore = getObjectFromForm(event.target);
-
-        addScore(round.id, newScore).then((freshScore) => {
-            onScoreChange(freshScore);
-        });
-    }
-
-    return (
-        <form key={round.id} className="table-row score-row" onSubmit={(event) => handleSubmit(event)}>
-            <div className="score-hole span-1">
-                {
-                    hole.hole_number
-                }
-            </div>
-            <div className="score-layout span-1">
-                {
-                    <HoleLayoutSwitch
-                        holes={holes}
-                        defaultLayout={startingHole.layout}
-                        onLayoutChange={onLayoutChange}
-                    />
-                }
-            </div>
-            <div className="score-distance span-1">
-                {
-                    `${getValueOrDash(hole.distance)} ft`
-                }
-            </div>
-            <div className="score-par span-1">
-                {
-                    getValueOrDash(hole.par)
-                }
-            </div>
-            <div className="score-score span-1">
-                {
-                    <input className="edit-field" name="score" type="number" required></input>
-                }
-            </div>
-            <div className="buttons">
-                {
-                    <input type="submit" value="Save"></input>
-                }
+                {score && <button type="button" onClick={() => { handleOnClickDelete() }}>Clear</button>}
             </div>
         </form>
     );
