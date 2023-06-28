@@ -2,6 +2,8 @@ import { Link, Outlet, useParams } from "react-router-dom"
 import { getRound, editScore, deleteScore, addScore } from "../api/round";
 import { useEffect, useState } from "react";
 import { getCourse as getCourseApi } from "../api/course";
+import { getValueOrDash } from "../helpers/formatting";
+import { getObjectFromForm } from "../helpers/forms";
 
 
 export default function RoundPage() {
@@ -178,7 +180,6 @@ function ListScores({
 }
 
 function HoleLayoutSwitch({ holes, defaultLayout, onLayoutChange }) {
-
     const holeOptions = [];
     for (let hole of holes) {
         holeOptions.push(<option key={hole.id} value={hole.id}>{hole.layout}</option>);
@@ -202,7 +203,6 @@ function HoleLayoutSwitch({ holes, defaultLayout, onLayoutChange }) {
 }
 
 function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete, round}) {
-    const [layout, setLayout] = useState(startingHole.layout);
     const [editing, setEditing] = useState(!score.score);
     const [hole, setHole] = useState(startingHole);
 
@@ -215,15 +215,7 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
         }
     }
 
-    function getScoreDisplayValue(value) {
-        if (!value && value !== 0) {
-            return "-";
-        }
-        return value;
-    }
-
     function handleOnClickEdit() {
-        console.log('Editing score with id', round.id);
         setEditing(!editing);
     }
 
@@ -234,16 +226,9 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
     function handleSubmit(event) {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
-        const editedFields = Object.fromEntries(formData.entries());
+        const editedFields = getObjectFromForm(event.target);
 
-        for (let prop in editedFields) {
-            if (editedFields[prop] === "") {
-                editedFields[prop] = null;
-            }
-        }
-
-        const editedScore = Object.assign({hole_id: hole.id, round_id: round.id}, score,  editedFields);
+        const editedScore = Object.assign(score, editedFields);
         editScore(round.id, editedScore).then((freshScore) => {
             onScoreChange(freshScore);
             setEditing(false);
@@ -263,21 +248,21 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
                     // <input className="edit-field" name="layout" type="text" defaultValue={hole.layout}></input>
                     <HoleLayoutSwitch
                         holes={holes}
-                        defaultLayout={layout}
+                        defaultLayout={startingHole.layout}
                         onLayoutChange={onLayoutChange}
                     />
                         :
-                        getScoreDisplayValue(hole.layout)
+                        getValueOrDash(hole.layout)
                 }
             </div>
             <div className="score-distance span-1">
                 {
-                    `${getScoreDisplayValue(hole.distance)} ft`
+                    `${getValueOrDash(hole.distance)} ft`
                 }
             </div>
             <div className="score-par span-1">
                 {
-                    getScoreDisplayValue(hole.par)
+                    getValueOrDash(hole.par)
                 }
             </div>
             <div className="score-score span-1">
@@ -300,7 +285,6 @@ function ScoredHoleRow({startingHole, holes, score, onScoreChange, onScoreDelete
 }
 
 function UnscoredHoleRow({startingHole, holes, onScoreChange, round}) {
-    const [layout, setLayout] = useState(startingHole.layout);
     const [hole, setHole] = useState(startingHole);
 
     function onLayoutChange(holeId) {
@@ -312,29 +296,13 @@ function UnscoredHoleRow({startingHole, holes, onScoreChange, round}) {
         }
     }
 
-    function getScoreDisplayValue(value) {
-        if (!value && value !== 0) {
-            return "-";
-        }
-        return value;
-    }
-
     function handleSubmit(event) {
         event.preventDefault();
 
-        const formData = new FormData(event.target);
-        const editedFields = Object.fromEntries(formData.entries());
+        const newScore = getObjectFromForm(event.target);
 
-        for (let prop in editedFields) {
-            if (editedFields[prop] === "") {
-                editedFields[prop] = null;
-            }
-        }
-
-        const newScore = Object.assign({hole_id: hole.id, round_id: round.id}, editedFields);
         addScore(round.id, newScore).then((freshScore) => {
             onScoreChange(freshScore);
-            setEditing(false);
         });
     }
 
@@ -349,19 +317,19 @@ function UnscoredHoleRow({startingHole, holes, onScoreChange, round}) {
                 {
                     <HoleLayoutSwitch
                         holes={holes}
-                        defaultLayout={layout}
+                        defaultLayout={startingHole.layout}
                         onLayoutChange={onLayoutChange}
                     />
                 }
             </div>
             <div className="score-distance span-1">
                 {
-                    `${getScoreDisplayValue(hole.distance)} ft`
+                    `${getValueOrDash(hole.distance)} ft`
                 }
             </div>
             <div className="score-par span-1">
                 {
-                    getScoreDisplayValue(hole.par)
+                    getValueOrDash(hole.par)
                 }
             </div>
             <div className="score-score span-1">
