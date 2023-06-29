@@ -1,8 +1,8 @@
 import { Link, Outlet, useParams } from "react-router-dom"
-import { getRound, editScore, deleteScore, addScore } from "../api/round";
+import { getRound, editScore, deleteScore, addScore, editRound } from "../api/round";
 import { useEffect, useState } from "react";
 import { getCourse as getCourseApi } from "../api/course";
-import { getValueOrDash } from "../helpers/formatting";
+import { getDateDisplayValue, getValueOrDash } from "../helpers/formatting";
 import { getObjectFromForm } from "../helpers/forms";
 
 
@@ -40,7 +40,9 @@ export default function RoundPage() {
             <div>
                 <RoundInfo
                     round={round}
+                    setRound={setRound}
                     scores={scores}
+                    course={course}
                 />
             </div>
             <div>
@@ -56,17 +58,78 @@ export default function RoundPage() {
 }
 
 
-function RoundInfo({ round, scores }) {
+function RoundInfo({ round, setRound, scores, course }) {
+
+    function LayoutContainer() {
+    const [editing, setEditing] = useState(false);
+        
+        return (
+            <>
+                {
+                    editing ? 
+                    <form className="round-layout-form" onSubmit={(event) => handleSubmit(event)}>
+                        <div>
+                            {/* make type drop down selection */}
+                            <input id="layout" type="text" name="default_layout" defaultValue={round.default_layout}></input>
+                            <button type="submit">Save Changes</button>
+                        </div>
+                    </form>
+                    :
+                    <button onClick={() => { setEditing(true) }}>
+                        layout: {round.default_layout}
+                    </button>
+                }
+            </>
+        )
+    }
+
+    function DateContainer() {
+        const [editing, setEditing] = useState(false);
+        return (
+            <>
+                {
+                    editing ? 
+                    <form className="round-date-form" onSubmit={(event) => handleSubmit(event)}>
+                        <div>
+                            <input id="datetime" type="datetime-local" name="date" defaultValue={round.date} />
+                            <button type="submit">Save Changes</button>
+                        </div>
+                    </form>
+                    :
+                    <button onClick={() => { setEditing(true) }}>
+                        {getDateDisplayValue(round.date)}
+                    </button>
+                }
+            </>
+        )
+
+    }
+
+
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        const formFields = getObjectFromForm(event.target);
+        const editedRound = Object.assign(round, formFields);
+        delete editedRound.scores;
+        editRound(editedRound).then((updatedRound) => setRound(updatedRound));
+    }
+
+
+
     if (!round) {
         return <div key='loading'>Your Data is Loading...</div>
     }
     return (
         <>
-            <div>ID: {round.id}</div>
-            <div>course: {round.course_id}</div>
-            <div>layout: {round.default_layout}</div>
-            <div>date: {round.date}</div>
-            <div>score: {Object.entries(scores).reduce((accumulator, [holeId, scoreObject]) => accumulator + scoreObject.score, 0)}</div>
+            <div>{course && course.name}</div>
+            <div>score: 
+                {Object.entries(scores).reduce(
+                    (accumulator, [holeId, scoreObject]) => accumulator + scoreObject.score, 0
+                )}
+            </div>
+            <LayoutContainer />
+            <DateContainer />
         </>
     );
 }
@@ -233,7 +296,7 @@ function ScoreRow({startingHole, holes, score, onScoreChange, onScoreDelete, rou
     }
 
     return (
-        <form key={round.id} className="table-row score-row" onSubmit={(event) => handleSubmit(event)}>
+        <form className="table-row score-row" onSubmit={(event) => handleSubmit(event)}>
             <div className="score-hole span-1">
                 {
                     hole.hole_number

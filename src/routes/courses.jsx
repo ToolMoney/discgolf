@@ -3,7 +3,7 @@ import {getCourses, editCourse, deleteCourse} from '../api/course.js';
 import {Outlet, Link} from 'react-router-dom';
 import {useSetPath} from '../hooks';
 import {addHole as addHoleApi} from '../api/course';
-
+import {addRound as addRoundApi} from '../api/round';
 
 export default function PageCourses() {
     const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -154,11 +154,21 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
         return uniqueHoles;
     }
 
-
     function handleOnClickNewRound() {
-        setPath(`../rounds/${course.id}/new`);
-        // TODO add page for new round on rounds page
+        if (course.holes) {
+            const fullDate = (new Date()).toISOString();
+            const date = fullDate.split('').slice(0, 16).join('');
+            const newRound = {
+                date: date,
+                default_layout: course.holes[0].layout,
+                course_id: course.id,
+            }
+            addRoundApi(newRound).then((newRound) => {
+                setPath(`/rounds/${newRound.id}`);
+            });
+        }
     }
+
 
     function handleOnClickEdit() {
         console.log('Editing course with id', course.id);
@@ -202,6 +212,7 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
 
         const newCourse = Object.assign({}, course, editedFields);
         delete newCourse.holes;
+        delete newCourse.rounds;
         console.log(newCourse);
         editCourse(newCourse).then((freshCourse) => {
             onCourseChange(freshCourse);

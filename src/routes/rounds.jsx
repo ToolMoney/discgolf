@@ -1,6 +1,10 @@
-import {useState, useEffect} from 'react';
-import {getRounds, editRound, deleteRound} from '../api/round.js';
-import {Outlet, Link} from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getRounds, editRound, deleteRound } from '../api/round.js';
+import { Outlet, Link } from 'react-router-dom';
+import { useSetPath } from '../hooks.jsx';
+import { getDateDisplayValue } from '../helpers/formatting.jsx';
+import { addRound as addRoundApi } from '../api/round';
+import { getCourse as getCourseApi } from '../api/course.js';
 
 
 export default function PageRounds() {
@@ -13,13 +17,9 @@ export default function PageRounds() {
             <div>
                 <RoundData />
             </div>
-            <div>
-                <AddRoundButton />
-            </div>
             <div id="route-content">
-                <Outlet context={[rounds, setRounds]} />
+                <Outlet />
             </div>
-            
             <div>
                 <ListRounds 
                     rounds={rounds}
@@ -37,17 +37,6 @@ function RoundData() {
             <button>Total Rounds</button>
             <button>Last Played</button>
         </>
-    );
-}
-
-function AddRoundButton() {
-    const [addFormOpen, setAddFormOpen] = useState(false);
-    let linkTo = addFormOpen ? "." : "add-round"
-
-    return (
-        <button type="button" onClick={() => { setAddFormOpen(!addFormOpen) }}>
-            <Link to={linkTo}>Begin New Round</Link>
-        </button>
     );
 }
 
@@ -118,7 +107,17 @@ function ListRounds({
 
 
 function RoundRow({round, onRoundChange, onRoundDelete}) {
-    const [editing, setEditing] = useState(false);
+    const [course, setCourse] = useState(null);
+    const setPath = useSetPath();
+    useEffect(() => {
+        getCourseApi(round.course_id).then(
+            (fetchedCourse) => {
+                setCourse(fetchedCourse);
+            }
+        );
+    }, []);
+
+
 
     function getRoundDisplayValue(value) {
         if (!value && value !== 0) {
@@ -127,23 +126,24 @@ function RoundRow({round, onRoundChange, onRoundDelete}) {
         return value;
     }
 
-    function handleOnClickEdit() {
-        console.log('Editing round with id', round.id);
-        setEditing(!editing);
-    }
-
     function handleOnClickDelete() {
         if (window.confirm(`Would you like to delete ${round.id} from ${round.date}?`)) {
             deleteRound(round).then(() => onRoundDelete())
         }
     }
 
-
     function handleOnClickNewRound() {
-        setPath(`../rounds/${course.id}/new`);
-        // TODO add page for new round on rounds page
+        const fullDate = (new Date()).toISOString();
+        const date = fullDate.split('').slice(0, 16).join('');
+        const newRound = {
+            date: date,
+            default_layout: round.default_layout,
+            course_id: round.course_id,
+        }
+        addRoundApi(newRound).then((newRound) => {
+            setPath(`/rounds/${newRound.id}`);
+        });
     }
-
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -157,7 +157,7 @@ function RoundRow({round, onRoundChange, onRoundDelete}) {
             }
         }
 
-        const newRound = Object.assign({}, round, editedFields);
+        const newRound = Object.assign(round, editedFields);
         console.log(newRound);
         editRound(newRound).then((freshRound) => {
             onRoundChange(freshRound);
@@ -169,52 +169,27 @@ function RoundRow({round, onRoundChange, onRoundDelete}) {
     return (
         <form key={round.id} className="table-row round-row" onSubmit={(event) => handleSubmit(event)}>
             <div className="round-date span-1">
-                {
-                    editing ? 
-                        <input className="edit-field" name="date" type="text" defaultValue={round.date} required></input>
-                        : round.date
-                }
+                <Link to={`./${round.id}`}>{getDateDisplayValue(round.date)}</Link>
             </div>
             <div className="round-course span-1">
-                {
-                    editing ? 
-                        <input className="edit-field" name="course_id" type="number" defaultValue={round.course_id}></input>
-                        : getRoundDisplayValue(round.course_id)
-                }
+                {course && getRoundDisplayValue(course.name)}
             </div>
             <div className="round-default-layout span-1">
-                {
-                    editing ? 
-                        <input className="edit-field" name="default-layout" type="number" defaultValue={round.default_layout}></input>
-                        : getRoundDisplayValue(round.default_layout)
-                }
+                {getRoundDisplayValue(round.default_layout)}
             </div>
             <div className="round-holes span-1">
-                {
-                    editing ? 
-                        <input className="edit-field" name="holes" type="number" defaultValue={round.scores.length}></input>
-                        : getRoundDisplayValue(round.scores.length)
-                }
+                {getRoundDisplayValue(round.scores.length)}
             </div>
             <div className="round-score span-1">
-                {
-                    editing ? 
-                        <input className="edit-field" name="score" type="number" defaultValue={round.scores.reduce((accumulator, scoreModel) => accumulator + scoreModel.score, 0)}></input>
-                        : getRoundDisplayValue(round.scores.reduce((accumulator, scoreModel) => accumulator + scoreModel.score, 0))
-                }
+                    {getRoundDisplayValue(round.scores.reduce(
+                        (accumulator, scoreModel) => accumulator + scoreModel.score, 0
+                    ))}
             </div>
             <div className="round-start span-1">
-                {
-                    <button type="button" onClick={() => { handleOnClickNewRound() }} disabled={editing}>New Round</button>
-                }
+                    <button type="button" onClick={() => { handleOnClickNewRound() }}>New Round</button>
             </div>
-            <div className="buttons">
-                {
-                    editing ?
-                        <input type="submit" value="Save"></input>
-                        : <button type="button" onClick={() => { handleOnClickEdit() }}>Edit</button>
-                }
-                <button type="button" onClick={() => { handleOnClickDelete() }}>Delete</button>
+            <div className="span-1">
+                    <button type="button" onClick={() => { handleOnClickDelete() }}>Delete</button>
             </div>
         </form>
     );
