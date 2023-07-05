@@ -12,3 +12,15 @@ export function getDateDisplayValue(dateString) {
 		timeStyle: "short",
 	})
 }
+
+export function getDateLocalValue(date) {
+	const addPad = n => ('0' + n).slice(-2);
+	
+	return (
+		date.getFullYear() + '-' +
+		addPad(date.getMonth() + 1) + '-' +
+		addPad(date.getDate()) + 'T' +
+		addPad(date.getHours()) + ':'  +
+		addPad(date.getMinutes())
+	)
+}

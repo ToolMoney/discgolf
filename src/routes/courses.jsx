@@ -156,8 +156,7 @@ function CourseRow({course, onCourseChange, onCourseDelete}) {
 
     function handleOnClickNewRound() {
         if (course.holes) {
-            const fullDate = (new Date()).toISOString();
-            const date = fullDate.split('').slice(0, 16).join('');
+            const date = (new Date()).toISOString();
             const newRound = {
                 date: date,
                 default_layout: course.holes[0].layout,

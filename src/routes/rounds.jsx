@@ -133,8 +133,7 @@ function RoundRow({round, onRoundChange, onRoundDelete}) {
     }
 
     function handleOnClickNewRound() {
-        const fullDate = (new Date()).toISOString();
-        const date = fullDate.split('').slice(0, 16).join('');
+        const date = (new Date()).toISOString();
         const newRound = {
             date: date,
             default_layout: round.default_layout,

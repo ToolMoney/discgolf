@@ -2,7 +2,7 @@ import { Link, Outlet, useParams } from "react-router-dom"
 import { getRound, editScore, deleteScore, addScore, editRound } from "../api/round";
 import { useEffect, useState } from "react";
 import { getCourse as getCourseApi } from "../api/course";
-import { getDateDisplayValue, getValueOrDash } from "../helpers/formatting";
+import { getDateDisplayValue, getDateLocalValue, getValueOrDash } from "../helpers/formatting";
 import { getObjectFromForm } from "../helpers/forms";
 
 
@@ -60,9 +60,18 @@ export default function RoundPage() {
 
 function RoundInfo({ round, setRound, scores, course }) {
 
+    function handleSubmit(event) {
+        event.preventDefault();
+        const formFields = getObjectFromForm(event.target);
+        const editedRound = Object.assign(round, formFields);
+        const fullDate = (new Date(editedRound.date)).toISOString();
+        editedRound.date = fullDate;
+        delete editedRound.scores;
+        editRound(editedRound).then((updatedRound) => setRound(updatedRound));
+    }
+
     function LayoutContainer() {
     const [editing, setEditing] = useState(false);
-        
         return (
             <>
                 {
@@ -85,37 +94,33 @@ function RoundInfo({ round, setRound, scores, course }) {
 
     function DateContainer() {
         const [editing, setEditing] = useState(false);
+        const date = new Date(round.date).toISOString();
+        const inputDateString = getDateLocalValue(new Date(round.date))
         return (
             <>
                 {
                     editing ? 
                     <form className="round-date-form" onSubmit={(event) => handleSubmit(event)}>
                         <div>
-                            <input id="datetime" type="datetime-local" name="date" defaultValue={round.date} />
+                            <input 
+                                id="datetime" 
+                                type="datetime-local" 
+                                name="date" 
+                                defaultValue={inputDateString}
+                                required
+                            />
                             <button type="submit">Save Changes</button>
                         </div>
                     </form>
                     :
                     <button onClick={() => { setEditing(true) }}>
-                        {getDateDisplayValue(round.date)}
+                        {getDateDisplayValue(date)}
                     </button>
                 }
             </>
         )
 
     }
-
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        const formFields = getObjectFromForm(event.target);
-        const editedRound = Object.assign(round, formFields);
-        delete editedRound.scores;
-        editRound(editedRound).then((updatedRound) => setRound(updatedRound));
-    }
-
-
 
     if (!round) {
         return <div key='loading'>Your Data is Loading...</div>
