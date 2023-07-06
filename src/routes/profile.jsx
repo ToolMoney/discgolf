@@ -1,4 +1,5 @@
-import { getUser, addUser as addUserApi, login } from "../api/profile";
+import { useState, useEffect } from "react";
+import { getUser, addUser as addUserApi, login, getSelf } from "../api/profile";
 
 
 export default function PageProfile() {
@@ -15,6 +16,10 @@ export default function PageProfile() {
             <div>
                 Login
                 <Login />
+            </div>
+            <div>
+                User Information
+                <UserInfo />
             </div>
         </>
     );
@@ -59,4 +64,24 @@ function Login() {
             <button type="submit">Add</button>
         </form>
     );
+}
+
+function UserInfo() {
+    const [self, setSelf] = useState(null);
+    useEffect(() => {
+        getSelf().then((fetchedSelf) => setSelf(fetchedSelf));
+    }, []);
+    if (self) {
+        return (
+            <>
+                <div>
+                    {self.id}
+                    <br/>
+                    {self.name}
+                    <br/>
+                    {self.email}
+                </div>
+            </>
+        )
+    }
 }

@@ -37,3 +37,9 @@ export function login(user) {
         credentials: "include",
     }).then((response) => response.json())
 }
+
+export function getSelf() {
+    return fetch('http://127.0.0.1:5000/users/self', {
+        credentials: "include",
+    }).then((response) => response.json())
+}
