@@ -2,7 +2,9 @@ import { json } from "react-router-dom";
 
 
 export function getDiscs() {
-    return fetch('http://127.0.0.1:5000/discs').then((response) => response.json())
+    return fetch('http://127.0.0.1:5000/discs', {
+        credentials: "include",
+    }).then((response) => response.json())
 }
 
 export function addDisc(disc) {
@@ -10,6 +12,7 @@ export function addDisc(disc) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(disc),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
@@ -18,12 +21,14 @@ export function editDisc(freshDisc) {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshDisc),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
 export function deleteDisc(discToDelete) {
     return fetch(`http://127.0.0.1:5000/discs/${discToDelete.id}`, {
         method: "DELETE",
+        credentials: "include",
     })
 }
 

@@ -1,5 +1,7 @@
 export function getRounds() {
-    return fetch('http://127.0.0.1:5000/rounds').then((response) => response.json())
+    return fetch('http://127.0.0.1:5000/rounds', {
+        credentials: "include",
+    }).then((response) => response.json())
 }
 
 export function addRound(round) {
@@ -7,6 +9,7 @@ export function addRound(round) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(round),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
@@ -15,19 +18,23 @@ export function editRound(freshRound) {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshRound),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
 export function deleteRound(roundToDelete) {
     return fetch(`http://127.0.0.1:5000/rounds/${roundToDelete.id}`, {
         method: "DELETE",
+        credentials: "include",
     })
 }
 
 
 
 export function getRound(roundId) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundId}`).then((response) => response.json())
+    return fetch(`http://127.0.0.1:5000/rounds/${roundId}`, {
+        credentials: "include",
+    }).then((response) => response.json())
 }
 
 export function addScore(roundId, score) {
@@ -35,6 +42,7 @@ export function addScore(roundId, score) {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(score),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
@@ -43,11 +51,13 @@ export function editScore(roundId, freshScore) {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshScore),
+        credentials: "include",
     }).then((response) => response.json())
 }
 
 export function deleteScore(roundId, scoreToDelete) {
     return fetch(`http://127.0.0.1:5000/rounds/${roundId}/scores/${scoreToDelete.id}`, {
         method: "DELETE",
+        credentials: "include",
     })
 }
