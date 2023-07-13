@@ -20,19 +20,55 @@ export default function AddDiscForm() {
         addDisc(setPath, discs, setDiscs, discToAdd);
     }
     return (
-        <form method="post" onSubmit={handleSubmit}>
-            Name: <input name="name" required />
-            <br />
-            Speed: <input name="speed" />
-            <br />
-            Glide: <input name="glide" />
-            <br />
-            Turn: <input name="turn" />
-            <br />
-            Fade: <input name="fade" />
-            <br />
-            <button type="button" onClick={() => setPath("..")}>Cancel</button>
-            <button type="submit">Add</button>
+        <form method="post" className="" onSubmit={handleSubmit}>
+
+            <div className="row g-2 align-items-center">
+                <div className="col-1">
+                    <label htmlFor="inputDiscName" className="form-label">Name: </label>
+                </div>
+                <div className="col-auto">
+                    <input name="name" id="inputDiscName" className="form-control" required />
+                </div>
+            </div>
+
+            <div className="row g-2 align-items-center">
+                <div className="col-1">
+                    <label htmlFor="inputDiscSpeed" className="form-label">Speed: </label>
+                </div>
+                <div className="col-auto">
+                    <input name="speed" id="inputDiscSpeed" className="form-control" type="number" />
+                </div>
+            </div>
+
+            <div className="row g-2 align-items-center">
+                <div className="col-1">
+                    <label htmlFor="inputDiscGlide" className="form-label">Glide: </label>
+                </div>
+                <div className="col-auto">
+                    <input name="glide" id="inputDiscGlide" className="form-control" type="number" />
+                </div>
+            </div>
+
+            <div className="row g-2 align-items-center">
+                <div className="col-1">
+                    <label htmlFor="inputDiscTurn" className="form-label">Turn: </label>
+                </div>
+                <div className="col-auto">
+                    <input name="turn" id="inputDiscTurn" className="form-control" type="number" />
+                </div>
+            </div>
+
+            <div className="row g-2 align-items-center">
+                <div className="col-1">
+                    <label htmlFor="inputDiscFade" className="form-label">Fade: </label>
+                </div>
+                <div className="col-auto">
+                    <input name="fade" id="inputDiscFade" className="form-control" type="number" />
+                </div>
+            </div>
+            
+            <button type="button" className="btn btn-secondary"onClick={() => setPath("..")}>Cancel</button>
+            <button type="submit" className="btn btn-primary">Add</button>
         </form>
     );
 }

@@ -1,25 +1,13 @@
-import {Outlet, Link} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import NavBar from './components/nav-bar';
 
 export default function App() {
+    
     return (
         <>
-            <div id="header">
-                <div id="navigation">
-                    <button>
-                        <Link to={`rounds`}>Rounds</Link>
-                    </button>
-                    <button>
-                        <Link to={`courses`}>Courses</Link>
-                    </button>
-                    <button>
-                        <Link to={`bag`}>Bag</Link>
-                    </button>
-                    <button>
-                        <Link to={`profile`}>Profile</Link>
-                    </button>
-                </div>
-            </div>
-            <div id="route-content">
+            <NavBar />
+            <br/>
+            <div id="route-content" className="container">
                 <Outlet />
             </div>
         </>
