@@ -42,7 +42,7 @@ function AddUser() {
             <br />
             Password: <input name="password" required />
             <br />
-            <button type="submit">Add</button>
+            <button className="btn btn-success" type="submit">Add</button>
         </form>
     );
 }
@@ -61,7 +61,7 @@ function Login() {
             <br />
             Password: <input name="password" required />
             <br />
-            <button type="submit">Add</button>
+            <button className="btn btn-success" type="submit">Add</button>
         </form>
     );
 }
