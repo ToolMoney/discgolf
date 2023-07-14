@@ -7,7 +7,7 @@ export default function PageProfile() {
         <>
             <div>
                 <h1>It's dangerous to go alone. 
-                    <br></br>Take this 🌮</h1>
+                    <br></br>Take these 🌮🌮</h1>
             </div>
             <div>
                 Add User
