@@ -1,11 +1,14 @@
+import { apiTarget } from "../helpers/api-target"
+
+
 export function getRounds() {
-    return fetch('http://127.0.0.1:5000/rounds', {
+    return fetch(`${apiTarget()}/rounds`, {
         credentials: "include",
     }).then((response) => response.json())
 }
 
 export function addRound(round) {
-    return fetch('http://127.0.0.1:5000/rounds', {
+    return fetch(`${apiTarget()}/rounds`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(round),
@@ -14,7 +17,7 @@ export function addRound(round) {
 }
 
 export function editRound(freshRound) {
-    return fetch(`http://127.0.0.1:5000/rounds/${freshRound.id}`, {
+    return fetch(`${apiTarget()}/rounds/${freshRound.id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshRound),
@@ -23,7 +26,7 @@ export function editRound(freshRound) {
 }
 
 export function deleteRound(roundToDelete) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundToDelete.id}`, {
+    return fetch(`${apiTarget()}/rounds/${roundToDelete.id}`, {
         method: "DELETE",
         credentials: "include",
     })
@@ -32,13 +35,13 @@ export function deleteRound(roundToDelete) {
 
 
 export function getRound(roundId) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundId}`, {
+    return fetch(`${apiTarget()}/rounds/${roundId}`, {
         credentials: "include",
     }).then((response) => response.json())
 }
 
 export function addScore(roundId, score) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundId}/scores`, {
+    return fetch(`${apiTarget()}/rounds/${roundId}/scores`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(score),
@@ -47,7 +50,7 @@ export function addScore(roundId, score) {
 }
 
 export function editScore(roundId, freshScore) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundId}/scores/${freshScore.id}`, {
+    return fetch(`${apiTarget()}/rounds/${roundId}/scores/${freshScore.id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshScore),
@@ -56,7 +59,7 @@ export function editScore(roundId, freshScore) {
 }
 
 export function deleteScore(roundId, scoreToDelete) {
-    return fetch(`http://127.0.0.1:5000/rounds/${roundId}/scores/${scoreToDelete.id}`, {
+    return fetch(`${apiTarget()}/rounds/${roundId}/scores/${scoreToDelete.id}`, {
         method: "DELETE",
         credentials: "include",
     })

@@ -1,11 +1,14 @@
+import { apiTarget } from "../helpers/api-target"
+
+
 export function getCourses() {
-    return fetch('http://127.0.0.1:5000/courses', {
+    return fetch(`${apiTarget()}/courses`, {
         credentials: "include",
     }).then((response) => response.json())
 }
 
 export function addCourse(course) {
-    return fetch('http://127.0.0.1:5000/courses', {
+    return fetch(`${apiTarget()}/courses`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(course),
@@ -14,7 +17,7 @@ export function addCourse(course) {
 }
 
 export function editCourse(freshCourse) {
-    return fetch(`http://127.0.0.1:5000/courses/${freshCourse.id}`, {
+    return fetch(`${apiTarget()}/courses/${freshCourse.id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshCourse),
@@ -23,20 +26,20 @@ export function editCourse(freshCourse) {
 }
 
 export function deleteCourse(courseToDelete) {
-    return fetch(`http://127.0.0.1:5000/courses/${courseToDelete.id}`, {
+    return fetch(`${apiTarget()}/courses/${courseToDelete.id}`, {
         method: "DELETE",
         credentials: "include",
     })
 }
 
 export function getCourse(courseId) {
-    return fetch(`http://127.0.0.1:5000/courses/${courseId}`, {
+    return fetch(`${apiTarget()}/courses/${courseId}`, {
         credentials: "include",
     }).then((response) => response.json())
 }
 
 export function addHole(courseId, hole) {
-    return fetch(`http://127.0.0.1:5000/courses/${courseId}`, {
+    return fetch(`${apiTarget()}/courses/${courseId}`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(hole),
@@ -45,7 +48,7 @@ export function addHole(courseId, hole) {
 }
 
 export function editHole(courseId, freshHole) {
-    return fetch(`http://127.0.0.1:5000/courses/${courseId}/${freshHole.id}`, {
+    return fetch(`${apiTarget()}/courses/${courseId}/${freshHole.id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshHole),
@@ -54,7 +57,7 @@ export function editHole(courseId, freshHole) {
 }
 
 export function deleteHole(courseId, holeToDelete) {
-    return fetch(`http://127.0.0.1:5000/courses/${courseId}/${holeToDelete.id}`, {
+    return fetch(`${apiTarget()}/courses/${courseId}/${holeToDelete.id}`, {
         method: "DELETE",
         credentials: "include",
     })

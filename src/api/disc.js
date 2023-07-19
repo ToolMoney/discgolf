@@ -1,14 +1,14 @@
-import { json } from "react-router-dom";
+import { apiTarget } from "../helpers/api-target"
 
 
 export function getDiscs() {
-    return fetch('http://127.0.0.1:5000/discs', {
+    return fetch(`${apiTarget()}/discs`, {
         credentials: "include",
     }).then((response) => response.json())
 }
 
 export function addDisc(disc) {
-    return fetch('http://127.0.0.1:5000/discs', {
+    return fetch(`${apiTarget()}/discs`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(disc),
@@ -17,7 +17,7 @@ export function addDisc(disc) {
 }
 
 export function editDisc(freshDisc) {
-    return fetch(`http://127.0.0.1:5000/discs/${freshDisc.id}`, {
+    return fetch(`${apiTarget()}/discs/${freshDisc.id}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(freshDisc),
@@ -26,7 +26,7 @@ export function editDisc(freshDisc) {
 }
 
 export function deleteDisc(discToDelete) {
-    return fetch(`http://127.0.0.1:5000/discs/${discToDelete.id}`, {
+    return fetch(`${apiTarget()}/${discToDelete.id}`, {
         method: "DELETE",
         credentials: "include",
     })
