@@ -34,7 +34,7 @@ export default function PageRounds() {
 function RoundData() {
     return (
         <>
-            <button>Total Rounds</button>
+            <div>Total Rounds</div>
             <button>Last Played</button>
         </>
     );
