@@ -40,7 +40,7 @@ function AddUser() {
             <br />
             email: <input name="email" required />
             <br />
-            Password: <input name="password" required />
+            Password: <input type="password" name="password" required />
             <br />
             <button className="btn btn-success" type="submit">Add</button>
         </form>
@@ -59,7 +59,7 @@ function Login() {
         <form method="post" onSubmit={handleSubmit}>
             Username: <input name="name" required />
             <br />
-            Password: <input name="password" required />
+            Password: <input type="password" name="password" required />
             <br />
             <button className="btn btn-success" type="submit">Add</button>
         </form>
