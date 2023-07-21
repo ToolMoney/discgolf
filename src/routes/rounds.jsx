@@ -35,7 +35,7 @@ function RoundData() {
     return (
         <>
             <div>Total Rounds</div>
-            <button>Last Played</button>
+            <button className="btn btn-secondary">Last Played</button>
         </>
     );
 }
